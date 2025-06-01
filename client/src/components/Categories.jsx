@@ -7,7 +7,7 @@ function Categories() {
   return (
     <div className='mt-16'>
         <p className='text-2xl md:text-3xl font-medium'>Categories</p>
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3'>
+        <div className='mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3'>
              {
                 categories.map((category, index)=>(
 <div key={index} className='group cursor-pointer py-5 px-3 rounded-lg flex flex-col justify-center items-center' style={{backgroundColor:category.bgColor}}
