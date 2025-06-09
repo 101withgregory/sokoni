@@ -21,7 +21,7 @@ const port = process.env.PORT || 4000
 await connectDB()
 await connectCloudinary()
 //allow multiple origins
-const allowedOrigins = ['http://localhost:5173', 'sokoni-client-9sx79xxt6-gregory-onyandos-projects.vercel.app']
+const allowedOrigins = ['http://localhost:5173', 'https://sokoni-client.vercel.app/']
 
 app.post('/stripe', express.raw({type: 'application/json'}), stripeWebhooks)
 ///middleware configuration
