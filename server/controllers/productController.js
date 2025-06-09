@@ -14,9 +14,9 @@ export const addProduct = async (req, res) => {
         }))
 
         await Product.create({...productData, image:imagesUrl});
-        res.json({success:true, message:'Product added'})
+        return res.json({success:true, message:'Product added'})
     } catch (error) {
-        res.json({success:false, message:error.message})
+        return res.json({success:false, message:error.message})
     }
 }
 
@@ -24,11 +24,12 @@ export const addProduct = async (req, res) => {
 export const productList = async (req, res) => {
     try {
         const products = await Product.find({})
-        res.json({success:true, products})
+        return res.json({ success: true, products })
     } catch (error) {
-        res.json({success:false, message:error.message})
+        return res.json({ success: false, message: error.message })
     }
 }
+
 
 //get single product : /api/product/id
 export const productById = async (req, res) => {

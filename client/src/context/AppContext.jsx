@@ -51,7 +51,7 @@ export const AppContextProvider = ({children})=>{
 
     
     //fetch All Products
-    const fetchProducts = async ()=>{
+    const fetchProducts = async ()=>{ 
         try {
          const {data} = await axios.get('/api/product/list')
         if(data.success){

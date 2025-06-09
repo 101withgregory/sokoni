@@ -1,7 +1,6 @@
-npm i bcryptjs cloudinary cookie-par ser cors dotenv express jsonwebtoken 
-mongoose multer stripe nodemon --save -dev
 
-import cors from 'corse'
+
+import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import express from 'express';
 import connectDB from './configs/db.js'
@@ -39,6 +38,6 @@ app.use('/api/cart',cartRouter)
 app.use('/api/address',addressRouter)
 app.use('/api/order',orderRouter)
 
-app.listening(port, ()=>{
+app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`)
 })
