@@ -1,7 +1,7 @@
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
-import stripe from 'stripe'
+import Stripe from 'stripe'
 
 
 // place order COD : /api/order/cod
@@ -69,12 +69,12 @@ export const placeOrderStripe = async (req, res) => {
     })
 
     //stripe gateway initialize
-    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
+    const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY)
      //create line items for stripe
      const line_items = productData.map((item)=>{
         return {
             price_data:{
-                currency:'ksh',
+                currency:'usd',
                 product_data:{
                     name:item.name,
                 },
@@ -85,7 +85,7 @@ export const placeOrderStripe = async (req, res) => {
      })
 
      //create session 
-     const session = await stripeInstance.checkout.session.create({
+     const session = await stripeInstance.checkout.sessions.create({
         line_items,
         mode:'payment',
         success_url:`${origin}/loader?next=my-orders`,
@@ -105,7 +105,7 @@ export const placeOrderStripe = async (req, res) => {
 // stripe webhooks to verify payments action : /stripe
 export const stripeWebhooks = async (req, res) => {
     //stripe gateway initialize
-    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY)
+    const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY)
 
     const sig = requestAnimationFrame.headers['stripe-signature'];
     let event;

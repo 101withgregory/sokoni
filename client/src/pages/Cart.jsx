@@ -83,13 +83,15 @@ const Cart = () => {
     useEffect(()=>{
          if(user){
            getUserAddress();
+         }else{
+            toast.error('Please Login first')
          }
     },[user])
     return products.length > 0 && cartItems ? (
         <div className="flex flex-col md:flex-row mt-16">
             <div className='flex-1 max-w-4xl'>
                 <h1 className="text-3xl font-medium mb-6">
-                    Shopping Cart <span className="text-sm text-primary">{getCartCount()} Ite ms</span>
+                    Shopping Cart <span className="text-sm text-primary">{getCartCount()} Items</span>
                 </h1>
 
                 <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
@@ -146,7 +148,7 @@ const Cart = () => {
                         </button>
                         {showAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                {addresses.map((address, index)=> (<p key={index} onClick={() => {setSelectedAddress(address); setShowAddress(false)} } className="text-gray-500 p-2 hover:bg-gray-100">
+                                {addresses.map((address, index)=> (<p key={index} onClick={() => {setSelectedAddress(address); setShowAddress(false)} } className="text-gray-500 p-2 hover:bg-gray-100 cursor-pointer">
                                    {address.street} , {address.city},${address.state}, ${address.country}
                                 </p>))}
                                 <p onClick={() => {navigate('/add-address')}} className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">

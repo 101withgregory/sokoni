@@ -21,6 +21,68 @@ export const AppContextProvider = ({children})=>{
     const [products, setProducts] = useState([])
     const [cartItems, setCartItems] = useState({})
     const [searchQuery, setSearchQuery]= useState({})
+    const [loadingAuth, setLoadingAuth] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // Function to verify user authentication status (runs on app load/refresh)
+    const checkUserAuthentication = async () => {
+        setLoadingAuth(true); // Start loading state
+        try {
+            // This API call will automatically send the 'token' cookie.
+            // Backend's authUser middleware will verify it and `isAuth` will return user data.
+            const { data } = await axios.get('/api/user/is-auth');
+            if (data.success && data.user) {
+                setIsLoggedIn(true);
+                setUser(data.user); // Set the user data from the backend
+                // If you have a separate seller check, you might trigger it here too
+                // For now, let's assume 'user' implies logged in, and 'isSeller' is separate
+                console.log("User re-authenticated successfully:", data.user.email);
+            } else {
+                setIsLoggedIn(false);
+                setUser(null);
+                console.log("No active user session found or token invalid.");
+            }
+        } catch (error) {
+            setIsLoggedIn(false);
+            setUser(null);
+            console.error("Error checking user authentication status:", error.message);
+            // On error, perhaps clear cookie if it's a persistent problem
+            // For production, avoid toast.error here, as it might appear on every page load if token is expired.
+        } finally {
+            setLoadingAuth(false); // End loading state regardless of outcome
+        }
+    };
+
+    // Similarly, a check for seller authentication if it's distinct
+    const checkSellerAuthentication = async () => {
+        // You can combine this with checkUserAuthentication if a seller is also a user
+        // Or if seller is a completely separate login, have a separate /api/seller/is-auth
+        // For simplicity, let's assume isSeller is also part of the user object or a separate check.
+        // Assuming you have a /api/seller/is-auth endpoint:
+        try {
+            const { data } = await axios.get('/api/seller/is-auth'); // You'd need to create this backend endpoint
+            if (data.success) {
+                setIsSeller(true);
+            } else {
+                setIsSeller(false);
+            }
+        } catch (error) {
+            setIsSeller(false);
+            console.error("Error checking seller authentication:", error.message);
+        }
+    };
+
+
+    // This useEffect runs ONLY ONCE when AppProvider mounts (on initial app load/refresh)
+    useEffect(() => {
+        const authenticateBoth = async () => {
+            // Run both checks in parallel or sequentially
+            await checkUserAuthentication();
+            await checkSellerAuthentication(); // Run after user check, or in parallel
+            setLoadingAuth(false); // Set loading to false ONLY after all checks are complete
+        };
+        authenticateBoth();
+    }, []); 
+
     
     // fetch seller status
     const fetchSeller = async()=>{
@@ -137,7 +199,7 @@ export const AppContextProvider = ({children})=>{
             updateCart()
         }
     },[cartItems])
-    const value = {navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin,products, setProducts,currency,addToCart,updateCartItem, removeFromCart,cartItems,searchQuery, setSearchQuery, getCartCount, getCartAmount,axios,fetchProducts, setCartItems}
+    const value = {navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin,products, setProducts,currency,addToCart,updateCartItem, removeFromCart,cartItems,searchQuery, setSearchQuery, getCartCount, getCartAmount,axios,fetchProducts, setCartItems,isLoggedIn, setIsLoggedIn,loadingAuth}
      return <AppContext.Provider value={value}>
         {children}
      </AppContext.Provider>

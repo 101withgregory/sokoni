@@ -68,20 +68,20 @@ const AddAddress = () => {
             <form action="" onSubmit={onSubmitHandler} className='space-y-3 mt-6 text-sm'>
 
                 <div className='grid grid-cols-2 gap-4'>
-                    <InputField handleChange={handleChange} address={address} name="First Name" type="text" placeholder="First Name"/>
-                    <InputField handleChange={handleChange} address={address} name="Last Name" type="text" placeholder="Last Name"/>
+                    <InputField handleChange={handleChange} address={address} name="firstName" type="text" placeholder="First Name"/>
+                    <InputField handleChange={handleChange} address={address} name="lastName" type="text" placeholder="Last Name"/>
                 </div>
                 <InputField handleChange={handleChange} address={address} name="email" type="email" placeholder="Enter Email"/>
-                <InputField handleChange={handleChange} address={address} name="street" type="text" placeholder="Stret"/>
+                <InputField handleChange={handleChange} address={address} name="street" type="text" placeholder="Street"/>
                 <div className='grid grid-cols-2 gap-4'>
-                    <InputField handleChange={handleChange} address={address} name="City" type="text" placeholder="City"/>
-                    <InputField handleChange={handleChange} address={address} name="State" type="text" placeholder="State"/>
+                    <InputField handleChange={handleChange} address={address} name="city" type="text" placeholder="City"/>
+                    <InputField handleChange={handleChange} address={address} name="state" type="text" placeholder="State"/>
                 </div>
                 <div className='grid grid-cols-2 gap-4'>
                     <InputField handleChange={handleChange} address={address} name="zipcode" type="number" placeholder="Zip code"/>
                     <InputField handleChange={handleChange} address={address} name="country" type="text" placeholder="Country"/>
                 </div>
-                <InputField handleChange={handleChange} address={address} name="Phone" type="text" placeholder="Phone"/>
+                <InputField handleChange={handleChange} address={address} name="phone" type="text" placeholder="Phone"/>
 
                 <button className='w-full mt-6 bg-primary text-white py-3 hover:bg-primary-dull transition cursor-pointer uppercase'>Save Address</button>
             </form>

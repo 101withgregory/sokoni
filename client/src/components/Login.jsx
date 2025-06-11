@@ -7,7 +7,7 @@ function Login() {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const {setShowUserLogin,axios, setUser,navigate} = useAppContext()
+    const {setShowUserLogin,axios, setUser,navigate, setIsLoggedIn} = useAppContext()
 
     const onSubmitHandler = async (e)=>{
         try {
@@ -19,6 +19,7 @@ function Login() {
           });
           if(data.success){
             toast.success(data.message)
+                setIsLoggedIn(true)
                  navigate("/")
                  setUser(data.user)
                  setShowUserLogin(false)
