@@ -7,8 +7,8 @@ export const updateCart = async (req, res) => {
         const userId = req.userId
         const {cartItems} = req.body
         await User.findByIdAndUpdate(userId, {cartItems})
-        res.json({success:true, message: 'cart updated'})
+        return res.json({success:true, message: 'cart updated'})
     } catch (error) {
-        res.json({success:false, message:error.message})
+        return res.json({success:false, message:error.message})
     }
 }

@@ -6,34 +6,45 @@ import Stripe from 'stripe'
 
 // place order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
-    try {
-        const userId = req.userId
-        const {items, address} = req.body;
-    if(!address || items.length ===0){ 
-    return res.json({success:false, message:"Invalid data"})}
+  try {
+    const userId = req.userId;
+    const { items, address } = req.body;
 
-    //calculate amount using items
-    let amount = await items.reduce(async (acc, item) => {
-        const product = await Product.findById(item.product);
-        return (await acc) + product.offerPrice * item.quantity;
+    if (!address || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: "Invalid order data" });
+    }
 
-    },0)
+    let amount = 0;
 
-    //adding tax charge (2%)
-    amount += Math.floor(amount * 0.02)
+    for (const item of items) {
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: `Product not found: ${item.product}` });
+      }
+      amount += product.offerPrice * item.quantity;
+    }
+
+    // Add 2% tax
+    amount += Math.floor(amount * 0.02);
 
     await Order.create({
-        userId,
-        items,
-        amount,
-        address,
-        paymentType:'COD',
-    })
-    return res.json ({success:true, message:'Order Placed Successfully'})
-    } catch (error) {
-        return res.json({success:false , message:error.message})
-    }
-}
+      userId,
+      items,
+      amount,
+      address,
+      paymentType: "COD",
+      isPaid: true, // optional: mark COD as paid immediately
+    });
+
+    return res.json({ success: true, message: "Order placed successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: error.message || "Internal Server Error" });
+  }
+};
 // place order stripe : /api/order/stripe
 export const placeOrderStripe = async (req, res) => {
     try {
@@ -165,14 +176,35 @@ export const stripeWebhooks = async (req, res) => {
 
 //order detail of a user : /api/order/user
 export const getUserOrders = async (req, res) => {
-    try {
-        const userId = req.userId
-        const orders = await Order.find({userId, $or:[{paymentType:'COD'}, {isPaid:true}]}).populate('items.product address').sort({createdAt: -1});
-        res.json({success:true, orders});
-    } catch (error) {
-        res.json({success:false, message:error.message})
-    }
-}
+  try {
+    const userId = req.userId;
+
+    const orders = await Order.find({
+      userId,
+      $or: [{ paymentType: "COD" }, { isPaid: true }],
+    })
+      .populate({
+        path: "items.product",
+        model: "Product",
+        select: "name category image offerPrice",
+      })
+      .populate("address")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const cleanOrders = orders.map(order => ({
+      ...order,
+      items: order.items.filter(item => item && item.product),
+    }));
+
+    return res.json({ success: true, orders: cleanOrders });
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: error.message || "Failed to fetch orders" });
+  }
+};
 
 // get all orders data for seller /admin : /api/order/seller
 
